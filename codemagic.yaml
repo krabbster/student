@@ -1,6 +1,38 @@
 workflows:
-  hello-world:
-    name: Hello world workflow
-scripts:
-  - name: Build for iOS         # Name of the section
-    script: flutter build ios   # The script(s) to be run in that section
+  my-workflow:
+    name: My workflow name
+    labels:
+      - QA
+      - ${TENANT_NAME}
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      groups:
+        - group_name
+      vars:
+        PUBLIC_ENV_VAR: "value here"
+      flutter: stable
+      xcode: latest
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+      cancel_previous_builds: false
+    scripts:
+      - name: Build iOS
+      script: flutter build ios
+    artifacts:
+      - build/**outputs/ipa/**/*.ipa
+      - build/**/outputs/bundle/**/*.aab
+    publishing:
+      email:
+        recipients:
+          - godisgrisen97@hotmail.com
+      scripts:
+        - echo 'Post-publish script'
